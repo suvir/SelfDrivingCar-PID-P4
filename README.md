@@ -1,98 +1,42 @@
 # CarND-Controls-PID
-Self-Driving Car Engineer Nanodegree Program
+This repository contains all the code needed to complete the PID Controller project for Udacity's Self-Driving Car Nanodegree.
 
 ---
 
-## Dependencies
+## Submission
 
-* cmake >= 3.5
- * All OSes: [click here for installation instructions](https://cmake.org/install/)
-* make >= 4.1(mac, linux), 3.81(Windows)
-  * Linux: make is installed by default on most Linux distros
-  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
-  * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
-* gcc/g++ >= 5.4
-  * Linux: gcc / g++ is installed by default on most Linux distros
-  * Mac: same deal as make - [install Xcode command line tools]((https://developer.apple.com/xcode/features/)
-  * Windows: recommend using [MinGW](http://www.mingw.org/)
-* [uWebSockets](https://github.com/uWebSockets/uWebSockets)
-  * Run either `./install-mac.sh` or `./install-ubuntu.sh`.
-  * If you install from source, checkout to commit `e94b6e1`, i.e.
-    ```
-    git clone https://github.com/uWebSockets/uWebSockets 
-    cd uWebSockets
-    git checkout e94b6e1
-    ```
-    Some function signatures have changed in v0.14.x. See [this PR](https://github.com/udacity/CarND-MPC-Project/pull/3) for more details.
-* Simulator. You can download these from the [project intro page](https://github.com/udacity/self-driving-car-sim/releases) in the classroom.
+Files modified
+- PID.cpp
+- PID.h
+- main.cpp
 
-There's an experimental patch for windows in this [PR](https://github.com/udacity/CarND-PID-Control-Project/pull/3)
+## Reflection
 
-## Basic Build Instructions
+### Effect of P,I,D components
 
-1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./pid`. 
+#### Controllers used
+In order to meet the project requirements, I used two PID controllers
+- The first PID controller controls the throttle and sets the desired velocity. This is similar to the PID controller covered in the course videos.
+- The second PID controller is used to control the steering angle.
+In both cases, the control is based on the cross track error(CTE)
 
-Tips for setting up your environment can be found [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
+#### Significance of P,I,D
 
-## Editor Settings
+- `P` or `Proportional` controller: This controller works proportionally to the CTE. If the CTE is too large, the control output will also be large. This can cause the car to oscillate uncomfortably.
+- `I` or `Integral` controller: This controller integrates over previous value of CTE. The integral term eliminates residual error as it integrates over more time periods. It results in a stabilizing effect on the steering. This can help counteract biases like strong wind, misaligned wheels etc.
+- `D` or `Derivative` controller: This controller is based on the rate of change of CTE. It helps dampen the oscillation. For example, if the car starts veering rapidly to the right, this controller will help dampen the action.
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+Intuitively,
+- `P` controller alone will result in the car oscillating wildly.
+- `PD` controller will help the car oscillate less. However, it will not be able to counteract biases.
+- `I` controller helps the car counteract biases like misaligned steering.
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+### Parameter tuning
 
-## Code Style
+The final solution is based on the following parameters: P = 0.1, I = 0.0001, D = 5
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
-
-## Project Instructions and Rubric
-
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
-
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
-for instructions and the project rubric.
-
-## Hints!
-
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
-
-## Call for IDE Profiles Pull Requests
-
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+These parameters were tuned manually as explained below:
+- `P`: I chose a value suitable for the car velocity.
+- `D`: The value of D was chosen to dampen oscillations. The value of 5 provided a relatively smooth output.
+- `I`: A small value was sufficient here. Experimenting with larger values resulted in a very oscillating output. I think this is because there is not much bias in the simulation.
 

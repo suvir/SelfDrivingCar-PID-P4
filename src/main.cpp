@@ -31,7 +31,7 @@ int main() {
 
     PID pid;
     // TODO: Initialize the pid variable.
-    pid.Init(0.1, 0.0001, 6);
+    pid.Init(0.1, 0.0001, 5);
     pid.setPrevTotalCte(100000000000.0);
     pid.setPrevK(0.5, 0.0001, 0.001);
 
