@@ -10,12 +10,23 @@ public:
   double i_error;
   double d_error;
 
+  double pre_cte;
+  bool first_run;
+
   /*
   * Coefficients
   */ 
   double Kp;
   double Ki;
   double Kd;
+
+  int count;
+  double total_cte;
+  double prev_total_cte;
+
+  double prev_kp;
+  double prev_ki;
+  double prev_kd;
 
   /*
   * Constructor
@@ -40,7 +51,10 @@ public:
   /*
   * Calculate the total PID error.
   */
-  double TotalError();
+  double OutputControl();
+
+  void setPrevTotalCte(double totalCte);
+  void setPrevK(double Kp, double Ki, double Kd);
 };
 
 #endif /* PID_H */
